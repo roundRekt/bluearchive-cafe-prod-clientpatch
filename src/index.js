@@ -1,15 +1,15 @@
-/**
- * Welcome to Cloudflare Workers! This is your first worker.
- *
- * - Run `npm run dev` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `npm run deploy` to publish your worker
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
-
 export default {
-	async fetch(request, env, ctx) {
-		return new Response('Hello World!');
-	},
+  async fetch(request, env) {
+    const key = new URL(request.url).pathname.slice(1);
+    const obj = await env.CLIENTPATCH.get(key);
+
+    if (obj) {
+      return new Response(obj.body);
+    }
+
+    return Response.redirect(
+      "https://prod-clientpatch.bluearchiveyostar.com/" + key,
+      302
+    );
+  },
 };
